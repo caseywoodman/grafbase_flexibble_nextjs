@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
 
+// Cloudinary connection using .env File
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_KEY,
@@ -15,13 +16,15 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Options for images on upload
     const options = {
       use_filename: true,
       unique_filename: false,
       overwrite: true,
-      transformation: [{ width: 1000, height: 752, crop: "scale" }],
+      transformation: [{ width: 1000, height: 752, crop: "fill" }],
     };
 
+    // result is the response from cloudinary
     const result = await cloudinary.uploader.upload(path, options);
 
     return NextResponse.json(result, { status: 200 });

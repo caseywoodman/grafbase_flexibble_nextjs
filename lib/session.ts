@@ -77,6 +77,7 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// Show frontend Current User Information
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions) as SessionInterface;
 

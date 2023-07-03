@@ -10,6 +10,7 @@ const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : 'http://lo
 
 const client = new GraphQLClient(apiUrl);
 
+// Get Token from Server for the logged in user
 export const fetchToken = async () => {
   try {
     const response = await fetch(`${serverUrl}/api/auth/token`);
@@ -19,6 +20,7 @@ export const fetchToken = async () => {
   }
 };
 
+// Upload Image to Cloudinary using /api/upload
 export const uploadImage = async (imagePath: string) => {
   try {
     const response = await fetch(`${serverUrl}/api/upload`, {
@@ -33,6 +35,7 @@ export const uploadImage = async (imagePath: string) => {
   }
 };
 
+// Query GraphQL API using query and variables
 const makeGraphQLRequest = async (query: string, variables = {}) => {
   try {
     return await client.request(query, variables);
@@ -41,12 +44,14 @@ const makeGraphQLRequest = async (query: string, variables = {}) => {
   }
 };
 
+// Fetch all projects from GrafBase
 export const fetchAllProjects = (category?: string | null, endcursor?: string | null) => {
   client.setHeader("x-api-key", apiKey);
 
   return makeGraphQLRequest(projectsQuery, { category, endcursor });
 };
 
+// Create new project on GrafBase with Authentication
 export const createNewProject = async (form: ProjectForm, creatorId: string, token: string) => {
   const imageUrl = await uploadImage(form.image);
 
@@ -67,7 +72,9 @@ export const createNewProject = async (form: ProjectForm, creatorId: string, tok
   }
 };
 
+// Update Project with authentification
 export const updateProject = async (form: ProjectForm, projectId: string, token: string) => {
+  // Check if Image was updated
   function isBase64DataURL(value: string) {
     const base64Regex = /^data:image\/[a-z]+;base64,/;
     return base64Regex.test(value);
@@ -95,16 +102,19 @@ export const updateProject = async (form: ProjectForm, projectId: string, token:
   return makeGraphQLRequest(updateProjectMutation, variables);
 };
 
+// Delete Project with authentification
 export const deleteProject = (id: string, token: string) => {
   client.setHeader("Authorization", `Bearer ${token}`);
   return makeGraphQLRequest(deleteProjectMutation, { id });
 };
 
+// Get Project Details for a single id
 export const getProjectDetails = (id: string) => {
   client.setHeader("x-api-key", apiKey);
   return makeGraphQLRequest(getProjectByIdQuery, { id });
 };
 
+// Create new user
 export const createUser = (name: string, email: string, avatarUrl: string) => {
   client.setHeader("x-api-key", apiKey);
 
@@ -119,11 +129,13 @@ export const createUser = (name: string, email: string, avatarUrl: string) => {
   return makeGraphQLRequest(createUserMutation, variables);
 };
 
+// Get all projects of a user
 export const getUserProjects = (id: string, last?: number) => {
   client.setHeader("x-api-key", apiKey);
   return makeGraphQLRequest(getProjectsOfUserQuery, { id, last });
 };
 
+// Get user by email
 export const getUser = (email: string) => {
   client.setHeader("x-api-key", apiKey);
   return makeGraphQLRequest(getUserQuery, { email });
