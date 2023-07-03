@@ -87,7 +87,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 <span className="w-full h-0.5 bg-light-white-200" />
                 <Link href={renderLink()} className="min-w-[82px] h-[82px]">
                     <Image
-                        src={projectDetails?.createdBy?.avatarUrl}
+                        src={projectDetails?.createdBy.avatarUrl}
                         className="rounded-full"
                         width={82}
                         height={82}
