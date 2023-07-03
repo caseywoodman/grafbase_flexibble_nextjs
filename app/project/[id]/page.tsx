@@ -1,27 +1,28 @@
-import { ProjectInterface } from '@/common.types'
-import Modal from '@/components/Modal'
-import ProjectActions from '@/components/ProjectActions'
-import RelatedProjects from '@/components/RelatedProjects'
-import { getProjectDetails } from '@/lib/actions'
-import { getCurrentUser } from '@/lib/session'
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from "next/image"
+import Link from "next/link"
 
-const Project = async ({ params: {id}}: {params: {id: string}}) => {
+import { getCurrentUser } from "@/lib/session"
+import { getProjectDetails } from "@/lib/actions"
+import Modal from "@/components/Modal"
+import ProjectActions from "@/components/ProjectActions"
+import RelatedProjects from "@/components/RelatedProjects"
+import { ProjectInterface } from "@/common.types"
+
+const Project = async ({ params: { id } }: { params: { id: string } }) => {
     const session = await getCurrentUser()
-    const result = await getProjectDetails(id) as {
-        project?: ProjectInterface }
+    const result = await getProjectDetails(id) as { project?: ProjectInterface}
 
-        if (!result.project) {
-            <p className='no-result-text'>failed to fetch project information</p>
-        }
+    if (!result?.project) return (
+        <p className="no-result-text">Failed to fetch project info</p>
+    )
 
-        const projectDetails = result?.project
-        const renderLink = () => `/profile/${projectDetails?.createdBy?.id}`
+    const projectDetails = result?.project
 
-  return (
-    <Modal>
-       <section className="flexBetween gap-y-8 max-w-4xl max-xs:flex-col w-full">
+    const renderLink = () => `/profile/${projectDetails?.createdBy?.id}`
+
+    return (
+        <Modal>
+            <section className="flexBetween gap-y-8 max-w-4xl max-xs:flex-col w-full">
                 <div className="flex-1 flex items-start gap-5 w-full max-xs:flex-col">
                     <Link href={renderLink()}>
                         <Image
@@ -55,6 +56,7 @@ const Project = async ({ params: {id}}: {params: {id: string}}) => {
                     </div>
                 )}
             </section>
+
             <section className="mt-14">
                 <Image
                     src={`${projectDetails?.image}`}
@@ -64,6 +66,7 @@ const Project = async ({ params: {id}}: {params: {id: string}}) => {
                     alt="poster"
                 />
             </section>
+
             <section className="flexCenter flex-col mt-20">
                 <p className="max-w-5xl text-xl font-normal">
                     {projectDetails?.description}
@@ -79,6 +82,7 @@ const Project = async ({ params: {id}}: {params: {id: string}}) => {
                     </Link>
                 </div>
             </section>
+      
             <section className="flexCenter w-full gap-8 mt-28">
                 <span className="w-full h-0.5 bg-light-white-200" />
                 <Link href={renderLink()} className="min-w-[82px] h-[82px]">
@@ -92,8 +96,9 @@ const Project = async ({ params: {id}}: {params: {id: string}}) => {
                 </Link>
                 <span className="w-full h-0.5 bg-light-white-200" />
             </section>
+
             <RelatedProjects userId={projectDetails?.createdBy?.id} projectId={projectDetails?.id} />
-    </Modal>
+        </Modal>
     )
 }
 
